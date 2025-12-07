@@ -600,14 +600,12 @@ const confirmSaveOffer = async () => {
       formDataToSend.append('saleEndDate', '')
     }
     
-    // Convert ID to number, handling both string and number IDs
-    const id = typeof currentProductId.value === 'number' 
-      ? currentProductId.value 
-      : parseInt(String(currentProductId.value), 10)
+    // Validate and use ID (can be UUID or number)
+    const id = String(currentProductId.value).trim()
     
-    if (!id || isNaN(id) || id <= 0) {
-      console.error('Invalid product ID:', currentProductId.value, 'parsed as:', id)
-      error(`Error: ID de producto inválido (${currentProductId.value}). Por favor, intenta nuevamente.`)
+    if (!id || id === '') {
+      console.error('Invalid product ID: empty or null')
+      error('Error: ID de producto inválido. Por favor, intenta nuevamente.')
       submittingSale.value = false
       return
     }
@@ -838,13 +836,12 @@ const cancelUpdateStock = () => {
 }
 
 const deleteProduct = async (productId) => {
-  const id = parseInt(productId)
-  if (!id || isNaN(id)) {
+  if (!productId) {
     error('Error: ID de producto inválido')
     return
   }
   
-  pendingProductId.value = id
+  pendingProductId.value = String(productId).trim()
   showDeleteProductModal.value = true
 }
 
@@ -865,13 +862,12 @@ const cancelDeleteProduct = () => {
 }
 
 const reactivateProduct = async (productId) => {
-  const id = parseInt(productId)
-  if (!id || isNaN(id)) {
+  if (!productId) {
     error('Error: ID de producto inválido')
     return
   }
   
-  pendingProductId.value = id
+  pendingProductId.value = String(productId).trim()
   showReactivateProductModal.value = true
 }
 
@@ -924,14 +920,13 @@ const getFinalPrice = (product) => {
 }
 
 const toggleFeatured = async (productId, currentState) => {
-  const id = parseInt(productId)
-  if (!id || isNaN(id)) {
+  if (!productId) {
     error('Error: ID de producto inválido')
     return
   }
   
   const newState = !currentState
-  pendingProductId.value = id
+  pendingProductId.value = String(productId).trim()
   pendingFeaturedState.value = newState
   showToggleFeaturedModal.value = true
 }
