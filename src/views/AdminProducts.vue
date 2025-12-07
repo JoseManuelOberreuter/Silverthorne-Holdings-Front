@@ -561,6 +561,13 @@ const submitSale = async (formData) => {
 const confirmSaveOffer = async () => {
   submittingSale.value = true
   try {
+    // Validate product ID first, before processing form data
+    if (!currentProductId.value) {
+      error('Error: ID de producto no encontrado. Por favor, cierra y vuelve a abrir el formulario de oferta.')
+      submittingSale.value = false
+      return
+    }
+    
     const formData = pendingSaleForm.value
     const formDataToSend = new FormData()
     formDataToSend.append('isOnSale', String(formData.isOnSale))
@@ -593,9 +600,15 @@ const confirmSaveOffer = async () => {
       formDataToSend.append('saleEndDate', '')
     }
     
-    const id = parseInt(currentProductId.value)
-    if (!id || isNaN(id)) {
-      error('Error: ID de producto inválido')
+    // Convert ID to number, handling both string and number IDs
+    const id = typeof currentProductId.value === 'number' 
+      ? currentProductId.value 
+      : parseInt(String(currentProductId.value), 10)
+    
+    if (!id || isNaN(id) || id <= 0) {
+      console.error('Invalid product ID:', currentProductId.value, 'parsed as:', id)
+      error(`Error: ID de producto inválido (${currentProductId.value}). Por favor, intenta nuevamente.`)
+      submittingSale.value = false
       return
     }
     
